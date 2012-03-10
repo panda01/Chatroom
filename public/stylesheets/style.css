@@ -15,6 +15,7 @@ b, .bold			{ font-weight: bold; }
 .flight				{ float: right; }
 .w400				{ width: 400px; }
 
+.w400 + .w400 		{ padding-left: 10px; }
 
 #messages-wrap
 {
@@ -22,14 +23,14 @@ b, .bold			{ font-weight: bold; }
 	height: 450px;
 }
 #messages-wrap,
-#users				{ border: 1px solid #333; }
+#users				{ border: 1px solid #666; }
 #users				{ border-left: none; }
 #messages-wrap h3
 {
 	position: absolute;
 	top: 0px;
-	left: 0px;
-	width: inherit;
+	left: 10px;
+	width: 390px;
 	height: auto;
 	z-index: 2;
 }
@@ -38,8 +39,9 @@ b, .bold			{ font-weight: bold; }
 	position: absolute;
 	bottom: 0px;
 	height: auto;
-	width: inherit;
+	width: 390px;
 	z-index: 1;
+	left: 10px;
 }
 
 .message + .message		{ padding-top: 15px; }
