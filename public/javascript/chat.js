@@ -55,7 +55,7 @@
 				$input.next().html('Username Too long');
 			else
 			{
-				$.post('http://localhost:3000/login',
+				$.post('/login',
 					{login: v},
 					function(data){
 						if( data.error !== undefined )
@@ -84,7 +84,7 @@
 			else
 			{
 				clearInterval( update );
-				$.post('http://localhost:3000/send/',
+				$.post('/send',
 					{ msg: v, sess: users.getMe() },
 					function(data){
 						if( data.error !== undefined )
@@ -106,7 +106,7 @@
 	function updateChat()
 	{
 		update = setInterval(function(){
-			$.getJSON('http://localhost:3000/update',
+			$.getJSON('/update',
 				function(data){
 					users.update( data.members.Users );
 					messages.update( data.chat.Messages );
