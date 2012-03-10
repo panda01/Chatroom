@@ -23,7 +23,7 @@ b, .bold			{ font-weight: bold; }
 	height: 450px;
 }
 #messages-wrap,
-#users				{ border: 1px solid #666; }
+#users				{ border: 1px solid #666; background-color: #eee; }
 #users				{ border-left: none; }
 #messages-wrap h3
 {

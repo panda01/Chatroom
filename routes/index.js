@@ -28,7 +28,7 @@ exports.login = function(req, res){
 exports.send = function(req, res){
 	var m = req.body.msg,
 		u = req.body.sess;
-	console.log( u );
+	console.log( m );
 	if( m.length < 1 )
 		res.json({error: 'No Nessage'});
 	else if( u === undefined )

@@ -69,6 +69,7 @@
 							messages = new Messages( data.chat.Messages );
 							
 							render();
+							updateChat();
 						}
 					},'json');
 			}
