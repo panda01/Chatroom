@@ -7,7 +7,7 @@ var sessions = require('./sessions.js'),
 	messages = require('./messages.js');
 
 exports.index = function(req, res){
-	res.render('index', { title: 'Express' })
+	res.render('index', { title: 'gPanda Chat' })
 };
 
 exports.login = function(req, res){
