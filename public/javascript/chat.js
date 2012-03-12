@@ -4,7 +4,9 @@
 		$chat,
 		users,
 		messages,
-		update;
+		update,
+		typing = { is: 0, timer: null},
+		Status = ['active', 'idle', 'typing', 'dead'];//sets up the User status variable, to be modifed
 	function initPage()
 	{
 		initGlobalVars();
@@ -47,8 +49,8 @@
 		$login.find('form').submit(function()
 		{
 			var $input = $(this).find('input#name'),
+				id = $(this).find('input#sessid').val(),
 				v = $input.val();
-				
 			if( v.length < 1 )
 				$input.next().html('Oops, you have to enter a value');
 			else if( v.length > 50  )
@@ -56,7 +58,7 @@
 			else
 			{
 				$.post('/login',
-					{login: v},
+					{login: v, cookieid: id},
 					function(data){
 						if( data.error !== undefined )
 							$input.next().html( data.error );
@@ -64,10 +66,13 @@
 						{
 							$login.hide();
 							$chat.show();
-							console.log( data.members.Users );
 							users = new Users( data.success, data.members.Users );
 							messages = new Messages( data.chat.Messages );
-							
+							if( readCookie('gpandachatid') === null || readCookie('gpandachatnick') === null )
+							{
+								createCookie( 'gpandachatid', data.success.id, 5 );
+								createCookie( 'gpandachatnick', data.success.nick, 5 );
+							}
 							render();
 							updateChat();
 						}
@@ -103,11 +108,27 @@
 			}
 			return false;
 		});
+		$chat.find('input#msg').keypress(function()
+		{
+			clearTimeout( typing.timer );
+			typing.is = 1;
+			typing.timer = setTimeout(function(){
+				typing.is = 0;
+			}, 3000);
+		});
+		
+		if( readCookie('gpandachatnick' ) !== null  && readCookie('gpandachatid') !== null ) //if you have cookies from this page
+		{
+			$login.find('input#sessid').val( readCookie('gpandachatid') );
+			$login.find('input#name').val( readCookie('gpandachatnick') );
+			$login.find('form').submit();
+		}
 	}
 	function updateChat()
 	{
 		update = setInterval(function(){
 			$.getJSON('/update',
+				{ typing: typing.is },
 				function(data){
 					users.update( data.members.Users );
 					messages.update( data.chat.Messages );
@@ -141,8 +162,9 @@
 		for( i in this.usrs )
 		{
 			var u = this.usrs[i];	//the user
-			m += '<div class="bold user user-id-' + u.id + '">';
-				m += u.nick;
+			
+			m += '<div class="user id-' + u.id + ' status-' + Status[u.status] + '">';
+				m += u.nick + ((Status[u.status] === 'typing')? '<i>Typing</i>': '') ;
 			m += '</div>';
 		}
 		$o.html( m );
@@ -188,6 +210,33 @@
 		}
 		m += '</div>';
 		$o.html( m );
+	}
+	function createCookie(name,value,days) 
+	{
+		if (days) {
+			var date = new Date();
+			date.setTime(date.getTime()+(days*24*60*60*1000));
+			var expires = "; expires="+date.toGMTString();
+		}
+		else var expires = "";
+		document.cookie = name+"="+value+expires+"; path=/";
+	}
+
+	function readCookie(name) 
+	{
+		var nameEQ = name + "=";
+		var ca = document.cookie.split(';');
+		for(var i=0;i < ca.length;i++) {
+			var c = ca[i];
+			while (c.charAt(0)==' ') c = c.substring(1,c.length);
+			if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+		}
+		return null;
+	}
+
+	function eraseCookie(name) 
+	{
+		createCookie(name,"",-1);
 	}
 	$(document).ready(function(){ initPage(); });
 }())
